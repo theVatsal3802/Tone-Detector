@@ -17,21 +17,28 @@ class EmotionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          text,
-          textScaleFactor: 1,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            text,
+            textScaleFactor: 1,
+          ),
         ),
         const SizedBox(
           height: 10,
         ),
         LinearPercentIndicator(
+          alignment: MainAxisAlignment.start,
           percent: percent,
           backgroundColor: Theme.of(context).colorScheme.secondary,
-          lineHeight: 40,
+          lineHeight: 20,
           barRadius: const Radius.circular(20),
           center: Text(
             "${(percent * 100).toStringAsFixed(2)} %",
             textScaleFactor: 1,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
           ),
           progressColor: Theme.of(context).colorScheme.primary,
         ),

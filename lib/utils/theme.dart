@@ -4,16 +4,16 @@ ThemeData theme() {
   return ThemeData(
     colorScheme: ColorScheme(
       brightness: Brightness.light,
-      primary: Colors.green.shade700,
+      primary: const Color(0xff00704a),
       onPrimary: Colors.white,
       secondary: Colors.grey.shade300,
-      onSecondary: Colors.black,
+      onSecondary: const Color(0xff27251f),
       error: Colors.red.shade900,
       onError: Colors.white,
-      background: Colors.white70,
-      onBackground: Colors.black,
+      background: Colors.white,
+      onBackground: const Color(0xff27251f),
       surface: Colors.grey.shade700,
-      onSurface: Colors.black,
+      onSurface: const Color(0xff27251f),
     ),
   );
 }

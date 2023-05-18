@@ -1,4 +1,5 @@
 import 'package:detect_tone/screens/auth_screen.dart';
+import 'package:detect_tone/screens/history_screen.dart';
 import 'package:detect_tone/screens/home_screen.dart';
 import 'package:detect_tone/screens/splash_screen.dart';
 import 'package:detect_tone/screens/verify_email_screen.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         AuthScreen.routeName: (context) => const AuthScreen(),
         VerifyEmailScreen.routeName: (context) => const VerifyEmailScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
+        HistoryScreen.routeName: (context) => const HistoryScreen(),
       },
     );
   }
