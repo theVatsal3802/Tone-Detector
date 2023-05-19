@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.detect_tone">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="detect_tone"
         android:name="${applicationName}"
