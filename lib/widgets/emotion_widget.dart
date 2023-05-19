@@ -37,7 +37,9 @@ class EmotionWidget extends StatelessWidget {
             "${(percent * 100).toStringAsFixed(2)} %",
             textScaleFactor: 1,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: percent >= 0.5
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.primary,
             ),
           ),
           progressColor: Theme.of(context).colorScheme.primary,

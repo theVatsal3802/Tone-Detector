@@ -6,6 +6,7 @@ class DetectFunctions {
   static Future<void> addCorrectPrediction({
     required String text,
     required String prediction,
+    required bool isCorrect,
   }) async {
     User? user = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance.collection("data").add(
@@ -16,6 +17,7 @@ class DetectFunctions {
         "date": ParseFunctions.getDate(
           date: DateTime.now(),
         ),
+        "isCorrect": isCorrect,
       },
     );
   }
@@ -36,5 +38,30 @@ class DetectFunctions {
       );
     }
     return result;
+  }
+
+  static List<Map<String, dynamic>> getPrediction() {
+    return [
+      {
+        "emotion": "Joy",
+        "percent": 0.8,
+      },
+      {
+        "emotion": "Anger",
+        "percent": 0.4,
+      },
+      {
+        "emotion": "Surprise",
+        "percent": 0.75,
+      },
+      {
+        "emotion": "Sadness",
+        "percent": 0.35,
+      },
+      {
+        "emotion": "Fear",
+        "percent": 0.25,
+      },
+    ];
   }
 }

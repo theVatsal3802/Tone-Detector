@@ -2,6 +2,7 @@ import 'package:detect_tone/functions/auth_functions.dart';
 import 'package:detect_tone/functions/detect_functions.dart';
 import 'package:detect_tone/screens/auth_screen.dart';
 import 'package:detect_tone/screens/history_screen.dart';
+import 'package:detect_tone/utils/parse_functions.dart';
 import 'package:detect_tone/widgets/emotion_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
   bool isPressed = false;
   bool isSaving = false;
+  List<Map<String, dynamic>> data = DetectFunctions.getPrediction();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +107,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 if (!isLoading)
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      FocusScope.of(context).unfocus();
+                      if (textController.text.isEmpty) {
+                        ParseFunctions.showSnackbar(
+                          text: "Please enter sentence before checking",
+                          context: context,
+                        );
+                        return;
+                      }
                       setState(() {
                         isPressed = true;
                       });
@@ -116,123 +127,130 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 if (isLoading) const CircularProgressIndicator.adaptive(),
                 if (isPressed)
-                  FutureBuilder(
-                    future: null,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator.adaptive(),
-                        );
-                      }
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(10),
-                            margin: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.background,
-                              borderRadius: BorderRadius.circular(20),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.background,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Is this prediction correct?",
+                              textScaleFactor: 1,
                             ),
-                            child: Column(
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text(
-                                  "Is this prediction correct?",
-                                  textScaleFactor: 1,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    OutlinedButton(
-                                      onPressed: () {
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    setState(() {
+                                      isSaving = true;
+                                    });
+                                    await DetectFunctions.addCorrectPrediction(
+                                      text: textController.text.trim(),
+                                      prediction: "Sadness",
+                                      isCorrect: false,
+                                    ).then(
+                                      (_) {
+                                        ParseFunctions.showSnackbar(
+                                          text: "Feedback Saved, Thank you",
+                                          context: context,
+                                        );
                                         setState(() {
+                                          isSaving = false;
                                           isPressed = false;
                                           textController.text = "";
                                         });
                                       },
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor:
-                                            Theme.of(context).colorScheme.error,
-                                        side: BorderSide(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error,
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        "No",
-                                        textScaleFactor: 1,
-                                      ),
+                                    );
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor:
+                                        Theme.of(context).colorScheme.error,
+                                    side: BorderSide(
+                                      color:
+                                          Theme.of(context).colorScheme.error,
                                     ),
-                                    OutlinedButton(
-                                      onPressed: () async {
-                                        setState(() {
-                                          isSaving = true;
-                                        });
-                                        await DetectFunctions
-                                            .addCorrectPrediction(
-                                          text: textController.text.trim(),
-                                          prediction: "prediction",
-                                        ).then(
-                                          (_) {
-                                            setState(() {
-                                              isSaving = false;
-                                              isPressed = false;
-                                              textController.text = "";
-                                            });
-                                          },
+                                  ),
+                                  child: const Text(
+                                    "No",
+                                    textScaleFactor: 1,
+                                  ),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    setState(() {
+                                      isSaving = true;
+                                    });
+                                    await DetectFunctions.addCorrectPrediction(
+                                      text: textController.text.trim(),
+                                      prediction: "Joy",
+                                      isCorrect: true,
+                                    ).then(
+                                      (_) {
+                                        ParseFunctions.showSnackbar(
+                                          text: "Feedback Saved, Thank you",
+                                          context: context,
                                         );
+                                        setState(() {
+                                          isSaving = false;
+                                          isPressed = false;
+                                          textController.text = "";
+                                        });
                                       },
-                                      style: OutlinedButton.styleFrom(
-                                        side: BorderSide(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        "Yes",
-                                        textScaleFactor: 1,
-                                      ),
+                                    );
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    side: BorderSide(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                     ),
-                                  ],
+                                  ),
+                                  child: const Text(
+                                    "Yes",
+                                    textScaleFactor: 1,
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Text(
-                              "Here are the results",
-                              textScaleFactor: 1,
-                              style: Theme.of(context).textTheme.headlineSmall,
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Text(
+                          "Here are the results",
+                          textScaleFactor: 1,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: EmotionWidget(
+                              text: data[index]["emotion"],
+                              percent: data[index]["percent"],
                             ),
-                          ),
-                          ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: 7,
-                            itemBuilder: (context, index) {
-                              return const Padding(
-                                padding: EdgeInsets.all(10),
-                                child: EmotionWidget(
-                                  text: "Happy 😁",
-                                  percent: 0.8,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ],
                   ),
               ],
             ),

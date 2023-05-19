@@ -66,7 +66,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         "Prediction: ${snapshot.data![index]["prediction"]}",
                         textScaleFactor: 1,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: snapshot.data![index]["prediction"] == "Joy"
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.error,
                         ),
                       ),
                     ),
