@@ -1,12 +1,26 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:detect_tone/utils/parse_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 
 class DetectFunctions {
+  static int findMax({required List<double> data}) {
+    int index = 0;
+    double value = 0;
+    for (var element in data) {
+      if (element > value) {
+        index = data.indexOf(element);
+        value = element;
+      }
+    }
+    return index;
+  }
+
   static Future<void> addCorrectPrediction({
     required String text,
     required String prediction,
-    required bool isCorrect,
   }) async {
     User? user = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance.collection("data").add(
@@ -17,7 +31,6 @@ class DetectFunctions {
         "date": ParseFunctions.getDate(
           date: DateTime.now(),
         ),
-        "isCorrect": isCorrect,
       },
     );
   }
@@ -40,28 +53,20 @@ class DetectFunctions {
     return result;
   }
 
-  static List<Map<String, dynamic>> getPrediction() {
-    return [
-      {
-        "emotion": "Joy",
-        "percent": 0.8,
-      },
-      {
-        "emotion": "Anger",
-        "percent": 0.4,
-      },
-      {
-        "emotion": "Surprise",
-        "percent": 0.75,
-      },
-      {
-        "emotion": "Sadness",
-        "percent": 0.35,
-      },
-      {
-        "emotion": "Fear",
-        "percent": 0.25,
-      },
-    ];
+  static Future<List<Map<String, dynamic>>> getPrediction(
+      {required String text}) async {
+    final url = Uri.parse("https://dpv.vercel.app?query=$text");
+    final response = await http.get(url);
+    final Map<String, dynamic> data = json.decode(response.body);
+    List<Map<String, dynamic>> myMap = [];
+    for (var element in data.keys) {
+      myMap.add(
+        {
+          "emotion": element,
+          "percent": data[element],
+        },
+      );
+    }
+    return myMap;
   }
 }

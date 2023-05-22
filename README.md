@@ -1,16 +1,14 @@
-# detect_tone
+# Detect Tone
 
-A new Flutter project.
+A App for detecting tone from text entered.
 
-## Getting Started
+This app was made as a part of the Machine Learning Course Project as the frontend part.
+The backend consisted of an API made by our group and hosted to predict the emotion from the sentence which was sent to it.
 
-This project is a starting point for a Flutter application.
+## The emotion detected are
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Joy
+- Sadness
+- Anger
+- Fear
+- Surprize

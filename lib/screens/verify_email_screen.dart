@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:detect_tone/screens/auth_screen.dart';
 import 'package:detect_tone/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -108,8 +109,15 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   height: 20,
                 ),
                 TextButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut().then(
+                      (_) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          AuthScreen.routeName,
+                          (route) => false,
+                        );
+                      },
+                    );
                   },
                   child: const Text(
                     "Change Email Id",

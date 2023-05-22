@@ -223,8 +223,10 @@ class _AuthScreenState extends State<AuthScreen> {
                                           isLoading = false;
                                         });
                                         if (value) {
-                                          Navigator.of(context).pushNamed(
+                                          Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
                                             VerifyEmailScreen.routeName,
+                                            (route) => false,
                                           );
                                         }
                                       },

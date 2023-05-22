@@ -43,7 +43,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               itemBuilder: (context, index) {
                 return ExpansionTile(
                   title: Text(
-                    snapshot.data![index]["date"],
+                    "Searched on: ${snapshot.data![index]["date"]}",
                     textScaleFactor: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -66,9 +66,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         "Prediction: ${snapshot.data![index]["prediction"]}",
                         textScaleFactor: 1,
                         style: TextStyle(
-                          color: snapshot.data![index]["prediction"] == "Joy"
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.error,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),

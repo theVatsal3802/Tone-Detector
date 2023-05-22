@@ -20,7 +20,16 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
   bool isPressed = false;
   bool isSaving = false;
-  List<Map<String, dynamic>> data = DetectFunctions.getPrediction();
+  List<Map<String, dynamic>> data = [];
+  List<double> values = [];
+
+  void getListFromMap() {
+    for (var element in data) {
+      values.add(
+        element['percent'],
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ElevatedButton(
                     onPressed: () async {
                       FocusScope.of(context).unfocus();
+                      data = [];
                       if (textController.text.isEmpty) {
                         ParseFunctions.showSnackbar(
                           text: "Please enter sentence before checking",
@@ -116,6 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                         return;
                       }
+                      data = await DetectFunctions.getPrediction(
+                          text: textController.text.trim());
+                      getListFromMap();
                       setState(() {
                         isPressed = true;
                       });
@@ -126,7 +139,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 if (isLoading) const CircularProgressIndicator.adaptive(),
-                if (isPressed)
+                if (isPressed && data.isEmpty)
+                  const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  ),
+                if (isPressed && data.isNotEmpty)
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -155,26 +172,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 OutlinedButton(
                                   onPressed: () async {
-                                    setState(() {
-                                      isSaving = true;
-                                    });
-                                    await DetectFunctions.addCorrectPrediction(
-                                      text: textController.text.trim(),
-                                      prediction: "Sadness",
-                                      isCorrect: false,
-                                    ).then(
-                                      (_) {
-                                        ParseFunctions.showSnackbar(
-                                          text: "Feedback Saved, Thank you",
-                                          context: context,
-                                        );
-                                        setState(() {
-                                          isSaving = false;
-                                          isPressed = false;
-                                          textController.text = "";
-                                        });
-                                      },
+                                    ParseFunctions.showSnackbar(
+                                      text: "Feedback Saved, Thank you",
+                                      context: context,
                                     );
+                                    setState(() {
+                                      isPressed = false;
+                                      textController.text = "";
+                                    });
                                   },
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor:
@@ -194,10 +199,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     setState(() {
                                       isSaving = true;
                                     });
+                                    int max =
+                                        (DetectFunctions.findMax(data: values) %
+                                            5);
+                                    Map<String, dynamic> prediction = data[max];
+                                    String key = prediction["emotion"];
                                     await DetectFunctions.addCorrectPrediction(
                                       text: textController.text.trim(),
-                                      prediction: "Joy",
-                                      isCorrect: true,
+                                      prediction: key,
                                     ).then(
                                       (_) {
                                         ParseFunctions.showSnackbar(
@@ -236,19 +245,37 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ),
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: data.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: EmotionWidget(
-                              text: data[index]["emotion"],
-                              percent: data[index]["percent"],
-                            ),
-                          );
-                        },
+                      EmotionWidget(
+                        text: data[2]["emotion"],
+                        percent: data[2]["percent"],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      EmotionWidget(
+                        text: data[3]["emotion"],
+                        percent: data[3]["percent"],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      EmotionWidget(
+                        text: data[0]["emotion"],
+                        percent: data[0]["percent"],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      EmotionWidget(
+                        text: data[1]["emotion"],
+                        percent: data[1]["percent"],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      EmotionWidget(
+                        text: data[4]["emotion"],
+                        percent: data[4]["percent"],
                       ),
                     ],
                   ),
